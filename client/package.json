@@ -1,0 +1,13 @@
+{
+  "name": "@crm/client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@crm/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
+  }
+}

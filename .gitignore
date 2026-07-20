@@ -1,0 +1,19 @@
+﻿# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+*.log
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project planning docs
+MasterProjectPlan.md
