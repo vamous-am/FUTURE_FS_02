@@ -4,14 +4,31 @@
   "private": true,
   "description": "Mini CRM — Client Lead Management System",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint ."
+  },
   "keywords": [],
   "author": "Amanuel",
   "license": "ISC",
   "packageManager": "pnpm@11.15.1",
   "type": "module",
   "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@babel/eslint-parser": "^8.0.1",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^26.1.1",
-    "typescript": "^7.0.2"
+    "@typescript-eslint/eslint-plugin": "^8.64.0",
+    "@typescript-eslint/parser": "^8.64.0",
+    "@typescript/typescript6": "^6.0.2",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.5",
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.64.0"
   }
 }
