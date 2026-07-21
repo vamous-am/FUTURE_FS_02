@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { loginSchema } from '@crm/shared';
 import { User } from '../models/User.js';
 
+import { formatZodError } from '../lib/validation.js';
+
 const router = Router();
 
 const COOKIE_OPTIONS = {
@@ -21,7 +23,13 @@ const COOKIE_OPTIONS = {
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   const result = loginSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ success: false, error: { message: 'Invalid request body', details: result.error.flatten() } });
+    res.status(400).json({
+      success: false,
+      error: {
+        message: 'Invalid request body',
+        details: formatZodError(result.error),
+      },
+    });
     return;
   }
 

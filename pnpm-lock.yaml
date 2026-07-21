@@ -114,6 +114,9 @@ importers:
       rate-limiter-flexible:
         specifier: ^11.2.0
         version: 11.2.0
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@types/bcryptjs':
         specifier: ^3.0.0

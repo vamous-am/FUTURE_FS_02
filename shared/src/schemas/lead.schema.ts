@@ -25,6 +25,7 @@ export const LeadStatus = ['new', 'contacted', 'converted'] as const;
 /**
  * Zod schema for creating or validating a lead.
  * Used for both client-side form validation and server-side request parsing.
+ * fax is a honeypot field — always empty for real users, never stored.
  */
 export const leadSchema = z.object({
   name: z.string().min(1),
@@ -34,6 +35,7 @@ export const leadSchema = z.object({
   source: z.enum(LeadSource),
   status: z.enum(LeadStatus).default('new'),
   notes: z.array(noteSchema).default([]),
+  fax: z.string().max(0).optional(),
 });
 
 export type Lead = z.infer<typeof leadSchema>;

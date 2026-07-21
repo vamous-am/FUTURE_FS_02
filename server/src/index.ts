@@ -5,7 +5,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './config/db.js';
 import authRouter from './routes/auth.js';
-import { loginRateLimiter } from './middleware/rateLimiter.js';
+import leadsRouter from './routes/leads.js';
+import { loginRateLimiter, leadsRateLimiter } from './middleware/rateLimiter.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 5001;
@@ -32,6 +33,10 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/auth/login', loginRateLimiter);
 app.use('/api/auth', authRouter);
+
+// Rate limit only the public POST — authenticated lead endpoints use no extra limiting
+app.post('/api/leads', leadsRateLimiter);
+app.use('/api/leads', leadsRouter);
 
 connectDB()
   .then(() => {
