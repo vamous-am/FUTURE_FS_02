@@ -6,7 +6,7 @@ services:
     plan: free
     rootDir: server
     buildCommand: pnpm install --frozen-lockfile && pnpm build
-    startCommand: node dist/index.js
+    startCommand: pnpm seed && pnpm start
     envVars:
       - key: NODE_ENV
         value: production
