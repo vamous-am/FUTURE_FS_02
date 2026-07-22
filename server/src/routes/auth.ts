@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { loginSchema } from '@crm/shared';
 import { User } from '../models/User.js';
-
+import { requireAuth } from '../middleware/auth.js';
 import { formatZodError } from '../lib/validation.js';
 
 const router = Router();
@@ -51,6 +51,16 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
   );
 
   res.cookie('token', token, COOKIE_OPTIONS);
+  res.json({ success: true, data: { username: user.username } });
+});
+
+/**
+ * GET /api/auth/me
+ * Returns the authenticated user's username from the JWT cookie.
+ * Used by the frontend to rehydrate auth state on page load.
+ */
+router.get('/me', requireAuth, (req: Request, res: Response): void => {
+  const user = (req as Request & { user: { username: string } }).user;
   res.json({ success: true, data: { username: user.username } });
 });
 
