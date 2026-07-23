@@ -4,9 +4,9 @@ services:
     runtime: node
     region: oregon
     plan: free
-    rootDir: server
-    buildCommand: pnpm install --frozen-lockfile && pnpm build
-    startCommand: pnpm seed && pnpm start
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @crm/shared build && pnpm --filter @crm/server build
+    startCommand: pnpm --filter @crm/server start
     envVars:
       - key: NODE_ENV
         value: production
