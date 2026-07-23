@@ -8,10 +8,12 @@ import { formatZodError } from '../lib/validation.js';
 
 const router = Router();
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'none' as const,
+  secure: isProd,
+  sameSite: isProd ? ('none' as const) : ('lax' as const),
   maxAge: 12 * 60 * 60 * 1000, // 12 hours
 };
 

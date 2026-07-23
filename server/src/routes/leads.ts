@@ -6,15 +6,37 @@ import { formatZodError } from '../lib/validation.js';
 
 const router = Router();
 
+const SORT_ALLOWLIST = ['name', 'email', 'status', 'source', 'createdAt'] as const;
+type SortField = (typeof SORT_ALLOWLIST)[number];
+
 /** Resolves the authenticated username from the request. */
 function getUsername(req: Request): string {
   return (req as Request & { user: { username: string } }).user.username;
 }
 
 /**
+ * GET /api/leads/stats
+ * Returns global lead counts by status, independent of any filters.
+ * Requires authentication.
+ */
+router.get('/stats', requireAuth, async (_req: Request, res: Response): Promise<void> => {
+  const [total, newCount, contacted, converted] = await Promise.all([
+    Lead.countDocuments(),
+    Lead.countDocuments({ status: 'new' }),
+    Lead.countDocuments({ status: 'contacted' }),
+    Lead.countDocuments({ status: 'converted' }),
+  ]);
+
+  res.json({
+    success: true,
+    data: { total, new: newCount, contacted, converted },
+  });
+});
+
+/**
  * GET /api/leads
- * Returns a paginated, filterable list of leads sorted by createdAt descending.
- * Query params: status, source, page (default 1), limit (default 20).
+ * Returns a paginated, filterable, searchable, sortable list of leads.
+ * Query params: status, source, search, page, limit, sortBy, sortOrder.
  * Requires authentication.
  */
 router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> => {
@@ -22,12 +44,22 @@ router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> 
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
   const skip = (page - 1) * limit;
 
+  const rawSortBy = req.query.sortBy as string | undefined;
+  const sortBy: SortField = SORT_ALLOWLIST.includes(rawSortBy as SortField)
+    ? (rawSortBy as SortField)
+    : 'createdAt';
+  const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
+
   const filter: Record<string, unknown> = {};
   if (req.query.status) filter.status = req.query.status;
   if (req.query.source) filter.source = req.query.source;
+  if (req.query.search) {
+    const pattern = new RegExp(String(req.query.search), 'i');
+    filter.$or = [{ name: pattern }, { email: pattern }];
+  }
 
   const [leads, total] = await Promise.all([
-    Lead.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    Lead.find(filter).sort({ [sortBy]: sortOrder }).skip(skip).limit(limit).lean(),
     Lead.countDocuments(filter),
   ]);
 
